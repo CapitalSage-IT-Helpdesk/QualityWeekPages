@@ -1,0 +1,76 @@
+:root {
+  color-scheme: dark;
+  background: #07182c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+main {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #07182c;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.flyer {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
+}
+
+.directory {
+  display: grid;
+  min-height: 100%;
+  place-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, #07182c, #075b85);
+}
+
+.directory-card {
+  width: min(760px, 100%);
+  padding: 32px;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 96%);
+  color: #07182c;
+  box-shadow: 0 18px 50px rgb(0 0 0 / 30%);
+}
+
+.directory-card h1 {
+  margin-top: 0;
+}
+
+.day-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.day-links a {
+  display: block;
+  padding: 18px;
+  border-radius: 10px;
+  background: #0078a8;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .day-links {
+    grid-template-columns: 1fr;
+  }
+}
