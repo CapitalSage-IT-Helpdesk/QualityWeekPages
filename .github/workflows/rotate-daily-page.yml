@@ -1,0 +1,52 @@
+name: Rotate Quality Week Daily Page
+
+on:
+  schedule:
+    # 04:17 UTC = 05:17 WAT. Off the hour to reduce scheduler congestion.
+    - cron: "17 4 * * 1-5"
+    # One-time campaign reset is selected by date; 17:17 UTC = 18:17 WAT Sunday.
+    - cron: "17 17 * * 0"
+  workflow_dispatch:
+    inputs:
+      day:
+        description: Day to display on the permanent /today/ URL
+        required: true
+        default: auto
+        type: choice
+        options: [auto, day-1, day-2, day-3, day-4, day-5]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: quality-week-daily-page
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Select daily artwork
+        id: select
+        run: node scripts/select-day.js "${{ inputs.day || 'auto' }}"
+      - name: Publish selector change
+        run: |
+          if git diff --quiet -- today/current.json; then
+            echo "The selected day is already published; no commit required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add today/current.json
+          git commit -m "Set Quality Week page for $(jq -r '.day' today/current.json | sed 's/^/Day /')"
+          git push
+      - name: Disable completed campaign schedule
+        if: github.event_name == 'schedule' && steps.select.outputs.disable_schedule == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/rotate-daily-page.yml/disable"

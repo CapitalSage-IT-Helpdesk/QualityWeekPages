@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Capital Sage Quality Week</title><link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <main><img id="daily-flyer" class="flyer" src="../assets/day-1.jpg" alt="Capital Sage Quality Week daily flyer"></main>
+  <script>
+    fetch(`current.json?v=${Date.now()}`, { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Selector request failed: ${response.status}`);
+        return response.json();
+      })
+      .then(({ image, alt }) => {
+        const flyer = document.getElementById("daily-flyer");
+        flyer.src = `${image}?v=${Date.now()}`;
+        flyer.alt = alt;
+      })
+      .catch((error) => console.error("Using the Day 1 fallback flyer.", error));
+  </script>
+</body>
+</html>
